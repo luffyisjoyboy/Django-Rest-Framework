@@ -1,15 +1,15 @@
 import requests
 
 # endpoint = "https://httpbin.org/anything"
-endpoint = "http://localhost:8000/api"
+endpoint = "http://localhost:8000/api/"
 
 # When sending json in parameters output would be in data key and content type is application/json
-response = requests.get(endpoint, json={"query":"Hello world!"})
+response = requests.get(endpoint, params={"abc": 123}, json={"query":"Hello world!"})
 
 # prints json: raw text response
-print(response.text)
-print(response.status_code)
-print(response.json()['message'])
+# print(response.text)
+# print(response.status_code)
+print(response.json())
 
 # When sending json in parameters output would be in form key and content type is application/x-www-form-urlencoded
 # response = requests.get(endpoint, data={"query":"Hello world!"})
