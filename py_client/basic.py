@@ -9,7 +9,7 @@ response = requests.get(endpoint, params={"abc": 123}, json={"query":"Hello worl
 # prints json: raw text response
 # print(response.text)
 # print(response.status_code)
-print(response.json())
+print(response.text)
 
 # When sending json in parameters output would be in form key and content type is application/x-www-form-urlencoded
 # response = requests.get(endpoint, data={"query":"Hello world!"})
