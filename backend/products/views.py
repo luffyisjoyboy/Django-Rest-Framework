@@ -22,3 +22,19 @@ class ProductCreateAPIView(generics.CreateAPIView):
         serializer.save(title=title, content=content)
 
 product_create_view = ProductCreateAPIView.as_view()
+
+class ProductListAPIView(generics.ListAPIView):
+    """
+        Returns all list of json objects of Product
+    """
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+product_list_view = ProductListAPIView.as_view()
+
+
+class ProductListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+product_list_create_apiview = ProductListCreateAPIView.as_view()
