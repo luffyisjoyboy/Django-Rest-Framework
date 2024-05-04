@@ -7,3 +7,18 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # lookup_field = 'pk'
+
+class ProductCreateAPIView(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def perform_create(self, serializer):
+        # serializer.save(user=self.request.user)
+        print(serializer.validated_data)
+        title = serializer.validated_data.get('title')
+        content = serializer.validated_data.get('content', None)
+        if content is None:
+            content = title
+        serializer.save(title=title, content=content)
+
+product_create_view = ProductCreateAPIView.as_view()
