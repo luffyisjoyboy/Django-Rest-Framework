@@ -131,10 +131,11 @@ auth_classes = [
     'api.authentication.TokenAuthentication'
 ]
 
-if DEBUG:
-    auth_classes = [
-        'api.authentication.TokenAuthentication'
-    ]
+# if DEBUG:
+#     auth_classes = [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'api.authentication.TokenAuthentication'
+#     ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": auth_classes,
