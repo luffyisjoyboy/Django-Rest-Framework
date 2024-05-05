@@ -37,4 +37,41 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-product_list_create_apiview = ProductListCreateAPIView.as_view()
+product_list_create_api_view = ProductListCreateAPIView.as_view()
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
+@api_view(["GET", "POST"])
+def product_alt_view(request, pk=None, *args, **kwargs):
+    method = request.method
+
+    if method == "GET":
+        # depends on params passed
+        # get data for given id -> detail view
+        if pk is not None:
+            obj = get_object_or_404(Product, id=pk)
+            data = ProductSerializer(obj, many=False).data
+            return Response(data)
+            # qs = Product.objects.filter(id=pk)
+            # if not qs.exist():
+            #     raise Http404
+
+        # get all list of data -> list view
+        qs = Product.objects.all()
+        data = ProductSerializer(qs, many=True).data
+        return Response(data)
+    
+    if method == "POST":
+        # create a new instance
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            # serializer.save()
+            title = serializer.validated_data.get('title')
+            content = serializer.validated_data.get('content', None)
+            if content is None:
+                content = title
+            serializer.save(title=title, content=content)
+            return Response(serializer.data)
+        return Response({"invalid":"not good data"}, status=400)
