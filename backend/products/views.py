@@ -3,11 +3,19 @@ from rest_framework import generics, mixins, permissions, authentication
 from .models import Product
 from .serializers import ProductSerializer
 from .permissions import IsStaffEditorPermission
-from api.authentication import TokenAuthentication
+
+
+class ProductListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
+
+product_list_create_api_view = ProductListCreateAPIView.as_view()
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
     # lookup_field = 'pk'
 
 
@@ -15,7 +23,7 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
-    permission_classes = [IsStaffEditorPermission]
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -27,6 +35,7 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
+    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
     def perform_destroy(self, instance):
         print(instance)
@@ -34,71 +43,59 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
 
 product_delete_api_view = ProductDeleteAPIView.as_view()
 
-class ProductCreateAPIView(generics.CreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# class ProductCreateAPIView(generics.CreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
-    def perform_create(self, serializer):
-        # serializer.save(user=self.request.user)
-        print(serializer.validated_data)
-        title = serializer.validated_data.get('title')
-        content = serializer.validated_data.get('content', None)
-        if content is None:
-            content = title
-        serializer.save(title=title, content=content)
+#     def perform_create(self, serializer):
+#         # serializer.save(user=self.request.user)
+#         print(serializer.validated_data)
+#         title = serializer.validated_data.get('title')
+#         content = serializer.validated_data.get('content', None)
+#         if content is None:
+#             content = title
+#         serializer.save(title=title, content=content)
 
-product_create_view = ProductCreateAPIView.as_view()
+# product_create_view = ProductCreateAPIView.as_view()
 
-class ProductListAPIView(generics.ListAPIView):
-    """
-        Returns all list of json objects of Product
-    """
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# class ProductListAPIView(generics.ListAPIView):
+#     """
+#         Returns all list of json objects of Product
+#     """
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
-product_list_view = ProductListAPIView.as_view()
-
-
-class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        TokenAuthentication,
-    ]
-    permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
-
-product_list_create_api_view = ProductListCreateAPIView.as_view()
+# product_list_view = ProductListAPIView.as_view()
 
 
-class ProductMixinView(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-    generics.GenericAPIView
-):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = 'pk'
+# class ProductMixinView(
+#     mixins.CreateModelMixin,
+#     mixins.ListModelMixin,
+#     mixins.RetrieveModelMixin,
+#     mixins.UpdateModelMixin,
+#     mixins.DestroyModelMixin,
+#     generics.GenericAPIView
+# ):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     lookup_field = 'pk'
 
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', None)
-        if pk is not None:
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
+#     def get(self, request, *args, **kwargs):
+#         pk = kwargs.get('pk', None)
+#         if pk is not None:
+#             return self.retrieve(request, *args, **kwargs)
+#         return self.list(request, *args, **kwargs)
     
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
     
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
 
-product_mixin_view = ProductMixinView.as_view()
+# product_mixin_view = ProductMixinView.as_view()
 
 # from rest_framework.decorators import api_view
 # from rest_framework.response import Response
