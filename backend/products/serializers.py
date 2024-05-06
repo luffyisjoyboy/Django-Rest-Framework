@@ -10,12 +10,23 @@ class ProductSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='product-detail', lookup_field='pk'
     )
+    # email = serializers.EmailField(write_only=True)
     class Meta:
         model = Product
         fields = [
             "pk", "url", "edit_url" , "title", "content", "price", "sale_price", "discount"
         ]
     
+    # def create(self, validated_data):
+    #     # email = validated_data.pop("email")
+    #     obj = super().create(validated_data)
+    #     print(obj)
+    #     return obj
+
+    # def update(self, instance, validated_data):
+    #     email = validated_data.pop('email')
+    #     return super().update(instance, validated_data)
+
     def get_edit_url(self, obj):
         # return f"api/products/{obj.pk}/"
         request = self.context.get('request')  # we are using this instead of self.request

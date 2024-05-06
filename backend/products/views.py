@@ -8,6 +8,13 @@ class ProductListCreateAPIView(StaffEditorPermissionMixin, generics.ListCreateAP
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get('title')
+        content = serializer.validated_data.get('content', None)
+        if content is None:
+            content = title
+        serializer.save(title=title, content=content)
+
 product_list_create_api_view = ProductListCreateAPIView.as_view()
 
 class ProductDetailAPIView(StaffEditorPermissionMixin, generics.RetrieveAPIView):
