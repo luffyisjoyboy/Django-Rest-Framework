@@ -4,6 +4,14 @@ from .models import Product
 
 from .validators import validate_title_no_hello, unique_product_title
 
+from api.serializers import UserPublicSerializer
+
+class ProductInlineSerializer(serializers.Serializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='product-detail', lookup_field='pk', read_only=True
+    )
+    title = serializers.CharField(read_only=True)
+
 class ProductSerializer(serializers.ModelSerializer):
     # loss_making = serializers.SerializerMethodField(read_only=True)
     # we want to rename get_discount to discount
@@ -13,12 +21,14 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name='product-detail', lookup_field='pk'
     )
     title = serializers.CharField(validators = [validate_title_no_hello, unique_product_title])
+    owner = UserPublicSerializer(source='user', read_only=True)
+    related_products = ProductInlineSerializer(source='user.product_set.all', read_only=True, many=True)
    #  name = serializers.CharField(source='title', read_only=True)
-    # email = serializers.EmailField(write_only=True)
+   #  email = serializers.EmailField(source='user.email', write_only=True)
     class Meta:
         model = Product
         fields = [
-            "pk", "url", "edit_url" , "title", "content", "price", "sale_price", "discount", # "name"
+            "owner", "pk", "url", "edit_url" , "title", "content", "price", "sale_price", "discount", "related_products"
         ]
     
     def validate_title(self, value):
